@@ -10,6 +10,12 @@
 
 require_once '../auth-helpers.php';
 
+// Configurar headers para JSON e CORS
+setHeaders();
+
+// Iniciar sessão
+iniciarSessao();
+
 $action = $_GET['action'] ?? '';
 
 try {

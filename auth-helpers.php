@@ -10,12 +10,8 @@ require_once 'config.php';
  */
 function iniciarSessao() {
     if (session_status() === PHP_SESSION_NONE) {
-        // Configurações de segurança de sessão
-        ini_set('session.cookie_httponly', 1);
-        ini_set('session.use_only_cookies', 1);
-        ini_set('session.cookie_secure', isset($_SERVER['HTTPS']) ? 1 : 0);
-        ini_set('session.cookie_samesite', 'Strict');
-        
+        // Configurações de segurança de sessão (já configuradas no config.php)
+        // Usar Lax para permitir cookies em redirecionamentos
         session_start();
         
         // Regenerar ID de sessão periodicamente para segurança
