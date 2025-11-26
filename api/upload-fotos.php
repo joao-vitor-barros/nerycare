@@ -5,6 +5,7 @@
  */
 
 require_once '../config.php';
+require_once '../auth-helpers.php';
 
 // Configurar CORS
 setHeaders();
@@ -15,6 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'error' => 'Método não permitido']);
     exit;
 }
+
+// Verificar autenticação - apenas admin pode fazer upload
+requerAutenticacao(true);
 
 // Diretório para salvar as fotos
 $uploadDir = '../uploads/fotos/';

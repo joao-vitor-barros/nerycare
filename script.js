@@ -726,6 +726,7 @@ function criarHTMLRelatorio(rel, id, index) {
         day: 'numeric'
     });
     
+    // Botão de excluir sempre visível (página já é protegida para admin)
     return `
         <div class="relatorio-item-simples">
             <div class="relatorio-item-header-simples">

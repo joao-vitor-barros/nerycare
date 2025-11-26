@@ -26,7 +26,13 @@
                     <input type="date" id="data-relatorio" required>
                 </div>
             </div>
-            <div id="theme-toggle-container" style="position: absolute; top: 20px; right: 20px;"></div>
+            <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center;">
+                <div id="theme-toggle-container"></div>
+                <div id="admin-menu" style="display: none;">
+                    <a href="admin-usuarios.html" class="btn-admin-menu" style="padding: 8px 16px; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em; margin-right: 10px;">👥 Gerenciar Usuários</a>
+                </div>
+                <button onclick="fazerLogout()" class="btn-sair" style="padding: 8px 16px; background: var(--color-danger); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">🚪 Sair</button>
+            </div>
         </header>
 
         <form id="formulario-relatorio">
@@ -241,16 +247,34 @@
     </div>
 
     <script src="theme.js?v=<?php echo APP_VERSION; ?>"></script>
+    <script src="auth-service.js?v=<?php echo APP_VERSION; ?>"></script>
     <script src="api-service.js?v=<?php echo APP_VERSION; ?>"></script>
     <script src="script.js?v=<?php echo APP_VERSION; ?>"></script>
     <script>
-        // Criar botão toggle de tema após o DOM carregar
-        document.addEventListener('DOMContentLoaded', function() {
+        // Proteger página - apenas admin pode acessar
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar autenticação e permissões
+            await protegerPagina(true);
+            
+            // Configurar menu admin
+            const usuario = await obterUsuarioAtual();
+            if (usuario && usuario.tipo === 'admin') {
+                document.getElementById('admin-menu').style.display = 'block';
+            }
+            
+            // Criar botão toggle de tema
             const container = document.getElementById('theme-toggle-container');
             if (container && window.themeManager) {
                 window.themeManager.createToggleButton(container);
             }
         });
+        
+        // Função para fazer logout
+        async function fazerLogout() {
+            if (confirm('Deseja realmente sair?')) {
+                await logout();
+            }
+        }
     </script>
 </body>
 </html>

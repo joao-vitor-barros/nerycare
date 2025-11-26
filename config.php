@@ -18,6 +18,14 @@ define('ENABLE_CORS', true);
 // Timezone
 date_default_timezone_set('America/Sao_Paulo');
 
+// Configurações de sessão
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_samesite', 'Strict');
+// Para HTTPS em produção, descomente a linha abaixo:
+// ini_set('session.cookie_secure', 1);
+session_start();
+
 /**
  * Conexão com o banco de dados
  */
