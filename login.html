@@ -189,9 +189,9 @@
                 if (sessao.authenticated) {
                     // Redirecionar para a página apropriada
                     if (sessao.user && sessao.user.tipo === 'admin') {
-                        window.location.href = 'index.html';
+                        window.location.href = 'index.php';
                     } else {
-                        window.location.href = 'agenda.html';
+                        window.location.href = 'agenda.php';
                     }
                     return;
                 }
@@ -252,9 +252,9 @@
                                 console.error('Erro ao verificar sessão:', error);
                                 // Mesmo assim tentar redirecionar
                                 if (resultado.user && resultado.user.tipo === 'admin') {
-                                    window.location.href = 'index.html';
+                                    window.location.href = 'index.php';
                                 } else {
-                                    window.location.href = 'agenda.html';
+                                    window.location.href = 'agenda.php';
                                 }
                             }
                         }, 1000);

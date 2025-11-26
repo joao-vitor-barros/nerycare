@@ -1,43 +1,13 @@
-# Configurações para o Sistema NeryCare
+# Permitir processar arquivos HTML como PHP
+<FilesMatch "\.(html|htm)$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
 
-# Habilitar rewrite engine
-RewriteEngine On
+# Outras configurações úteis
+DirectoryIndex index.php index.html
 
 # Proteger arquivos sensíveis
-<FilesMatch "^(config\.php|\.htaccess|database\.sql)$">
+<FilesMatch "^(config\.php|auth-helpers\.php|database.*\.sql|\.htaccess)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-# Headers de segurança
-<IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
-</IfModule>
-
-# Compressão GZIP
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
-</IfModule>
-
-# Cache de arquivos estáticos
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-</IfModule>
-
-# UTF-8 encoding
-AddDefaultCharset UTF-8
-
-# Prevenir listagem de diretórios
-Options -Indexes
-
-# Página de erro personalizada (opcional)
-# ErrorDocument 404 /404.html
-
