@@ -111,6 +111,9 @@ function handleLogin() {
                 'tipo' => 'admin'
             ]);
             
+            // Regenerar ID de sessão após login para segurança
+            session_regenerate_id(true);
+            
             echo json_encode([
                 'success' => true,
                 'message' => 'Primeiro usuário criado como administrador',
@@ -160,6 +163,9 @@ function handleLogin() {
         'login' => $usuario['login'],
         'tipo' => $usuario['tipo']
     ]);
+    
+    // Regenerar ID de sessão após login para segurança
+    session_regenerate_id(true);
     
     echo json_encode([
         'success' => true,

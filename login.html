@@ -231,14 +231,33 @@
                         mensagemSucesso.textContent = resultado.message || 'Login realizado com sucesso! Redirecionando...';
                         mensagemSucesso.classList.add('show');
                         
-                        // Redirecionar após 500ms
-                        setTimeout(() => {
-                            if (resultado.user && resultado.user.tipo === 'admin') {
-                                window.location.href = 'index.html';
-                            } else {
-                                window.location.href = 'agenda.html';
+                        // Aguardar um pouco para garantir que a sessão seja salva e verificar antes de redirecionar
+                        setTimeout(async () => {
+                            try {
+                                // Verificar se a sessão foi realmente criada
+                                const sessao = await verificarSessao();
+                                if (sessao.authenticated) {
+                                    // Redirecionar baseado no tipo de usuário
+                                    if (resultado.user && resultado.user.tipo === 'admin') {
+                                        window.location.href = 'index.html';
+                                    } else {
+                                        window.location.href = 'agenda.html';
+                                    }
+                                } else {
+                                    mostrarErro('Sessão não foi criada. Tente fazer login novamente.');
+                                    btnLogin.disabled = false;
+                                    btnLogin.innerHTML = '🔐 Entrar';
+                                }
+                            } catch (error) {
+                                console.error('Erro ao verificar sessão:', error);
+                                // Mesmo assim tentar redirecionar
+                                if (resultado.user && resultado.user.tipo === 'admin') {
+                                    window.location.href = 'index.html';
+                                } else {
+                                    window.location.href = 'agenda.html';
+                                }
                             }
-                        }, 500);
+                        }, 1000);
                     } else {
                         mostrarErro(resultado.error || 'Erro ao fazer login');
                         btnLogin.disabled = false;
