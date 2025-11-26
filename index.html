@@ -1,0 +1,257 @@
+<?php require_once 'version.php'; ?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NeryCare - Relatório da Noite</title>
+    <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="stylesheet" href="style.css?v=<?php echo APP_VERSION; ?>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1 class="logo">NeryCare</h1>
+                <p class="tagline">Cuidando com excelência</p>
+            </div>
+            <div class="header-content">
+                <h2 class="titulo-relatorio">📋 Relatório da Noite</h2>
+                <div class="date-selector">
+                    <label for="data-relatorio">Data:</label>
+                    <input type="date" id="data-relatorio" required>
+                </div>
+            </div>
+            <div id="theme-toggle-container" style="position: absolute; top: 20px; right: 20px;"></div>
+        </header>
+
+        <form id="formulario-relatorio">
+            <!-- 1. Resumo Geral da Noite -->
+            <section class="secao">
+                <h2>1. Resumo Geral da Noite</h2>
+                <div class="radio-group">
+                    <label><input type="radio" name="resumo" value="tranquila"> Tranquila</label>
+                    <label><input type="radio" name="resumo" value="agitada"> Agitada</label>
+                    <label><input type="radio" name="resumo" value="interrupcoes"> Com interrupções pontuais</label>
+                </div>
+            </section>
+
+            <!-- 2. Alimentação -->
+            <section class="secao">
+                <h2>2. Alimentação 🍼</h2>
+                <div class="campo">
+                    <label for="alimentacao-tipo">O que:</label>
+                    <input type="text" id="alimentacao-tipo" placeholder="Ex: Jantar / Mamadeira">
+                </div>
+                <div class="campo">
+                    <label for="alimentacao-horario">Horário:</label>
+                    <input type="time" id="alimentacao-horario">
+                </div>
+                <div class="campo">
+                    <label for="alimentacao-quantidade">Quantidade:</label>
+                    <input type="text" id="alimentacao-quantidade" placeholder="Ex: 150ml / 1 prato raso">
+                </div>
+                <div class="campo">
+                    <label>Aceitação:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="aceitacao" value="tudo"> Comeu tudo</label>
+                        <label><input type="radio" name="aceitacao" value="recusou-parte"> Recusou parte</label>
+                        <label><input type="radio" name="aceitacao" value="recusou-tudo"> Recusou tudo</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Higiene e Fraldas -->
+            <section class="secao">
+                <h2>3. Higiene e Fraldas 🧴</h2>
+                <div class="campo">
+                    <label>Banho:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="banho" value="sim"> Sim</label>
+                        <label><input type="radio" name="banho" value="nao"> Não</label>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="trocas-fralda">Trocas de Fralda:</label>
+                    <input type="number" id="trocas-fralda" min="0" placeholder="Quantidade">
+                </div>
+                <div class="campo">
+                    <label for="xixi">Xixi:</label>
+                    <input type="number" id="xixi" min="0" placeholder="Quantidade">
+                </div>
+                <div class="campo">
+                    <label for="coco">Cocô:</label>
+                    <input type="number" id="coco" min="0" placeholder="Quantidade">
+                </div>
+                <div class="campo">
+                    <label>Obs. Fralda:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="obs-fralda" value="normal"> Normal</label>
+                        <label><input type="radio" name="obs-fralda" value="diferente"> Algo diferente</label>
+                    </div>
+                    <input type="text" id="obs-fralda-detalhes" placeholder="Descreva o que foi diferente" style="margin-top: 10px; display: none;">
+                    <div id="fotos-fralda-container" style="margin-top: 15px; display: none;">
+                        <label for="fotos-fralda" style="display: block; margin-bottom: 8px; color: var(--text-label); font-weight: 600;">
+                            📷 Fotos (opcional):
+                        </label>
+                        <input type="file" id="fotos-fralda" accept="image/*" multiple style="display: none;">
+                        <button type="button" id="btn-selecionar-fotos" class="btn-foto" style="padding: 10px 20px; background: var(--color-primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            📷 Selecionar Fotos
+                        </button>
+                        <div id="preview-fotos" style="margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Sono -->
+            <section class="secao">
+                <h2>4. Sono 💤</h2>
+                <div class="campo">
+                    <label for="processo-dormir">Processo de dormir:</label>
+                    <input type="text" id="processo-dormir" placeholder="Ex: no colo, no berço sozinho, precisou de ninar">
+                </div>
+                <div class="campo">
+                    <label for="horario-dormiu">Horário que dormiu:</label>
+                    <input type="time" id="horario-dormiu">
+                </div>
+                <div class="campo">
+                    <label>Despertares:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="despertares" value="nao"> Não</label>
+                        <label><input type="radio" name="despertares" value="sim"> Sim</label>
+                    </div>
+                    <input type="text" id="horarios-despertares" placeholder="Horários dos despertares" style="margin-top: 10px; display: none;">
+                </div>
+                <div class="campo">
+                    <label for="motivo-despertar">Motivo do despertar:</label>
+                    <input type="text" id="motivo-despertar" placeholder="Ex: Fralda, pesadelo, fome, sem motivo aparente">
+                </div>
+            </section>
+
+            <!-- 5. Comportamento e Atividades -->
+            <section class="secao">
+                <h2>5. Comportamento e Atividades 🧸</h2>
+                <div class="campo">
+                    <label for="humor">Humor antes de dormir:</label>
+                    <input type="text" id="humor" placeholder="Ex: Agitado, Feliz, Choroso">
+                </div>
+                <div class="campo">
+                    <label for="atividade">Atividade realizada:</label>
+                    <input type="text" id="atividade" placeholder="Descreva a atividade">
+                </div>
+                <div class="campo">
+                    <label for="tempo-objetivo">Tempo/Objetivo:</label>
+                    <input type="text" id="tempo-objetivo" placeholder="Descreva o tempo ou objetivo">
+                </div>
+            </section>
+
+            <!-- 6. Saúde e Medicação -->
+            <section class="secao">
+                <h2>6. Saúde e Medicação 💊</h2>
+                <div class="campo">
+                    <label>Medicamentos/Vitaminas dados:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="medicamento" value="nenhum"> Nenhum</label>
+                        <label><input type="radio" name="medicamento" value="sim"> Sim</label>
+                    </div>
+                    <input type="text" id="medicamento-detalhes" placeholder="Nome + Horário" style="margin-top: 10px; display: none;">
+                </div>
+                <div class="campo">
+                    <label>Sintomas:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="sintomas" value="nenhum"> Nenhum</label>
+                        <label><input type="radio" name="sintomas" value="febre"> Febre</label>
+                        <label><input type="radio" name="sintomas" value="tosse"> Tosse</label>
+                        <label><input type="radio" name="sintomas" value="outro"> Outro</label>
+                    </div>
+                    <input type="text" id="sintomas-outro" placeholder="Descreva o sintoma" style="margin-top: 10px; display: none;">
+                </div>
+            </section>
+
+            <!-- 7. Precisa Repor (Estoque) -->
+            <section class="secao">
+                <h2>7. Precisa Repor (Estoque) 🛒</h2>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="repor" value="fraldas"> Fraldas</label>
+                    <label><input type="checkbox" name="repor" value="lenços"> Lenços</label>
+                    <label><input type="checkbox" name="repor" value="pomada"> Pomada</label>
+                    <label><input type="checkbox" name="repor" value="leite"> Leite/Fórmula</label>
+                    <label><input type="checkbox" name="repor" value="outro"> Outro</label>
+                </div>
+                <input type="text" id="repor-outro" placeholder="Especifique outro item" style="margin-top: 10px; display: none;">
+            </section>
+
+            <!-- 8. Observações Extras -->
+            <section class="secao">
+                <h2>8. Observações Extras</h2>
+                <div class="campo">
+                    <textarea id="observacoes" rows="4" placeholder="Adicione qualquer observação adicional importante... (mínimo 15 caracteres)" minlength="15" required></textarea>
+                    <div class="contador-caracteres">
+                        <span id="contador">0</span> / 15 caracteres mínimos
+                    </div>
+                    <div class="mensagem-erro" id="erro-observacoes" style="display: none;">
+                        ⚠️ Por favor, escreva pelo menos 15 caracteres nas observações
+                    </div>
+                </div>
+            </section>
+
+            <!-- Botões de ação -->
+            <div class="botoes-acao">
+                <button type="submit" class="btn btn-salvar">💾 Salvar Relatório</button>
+                <button type="button" class="btn btn-limpar" onclick="limparFormulario()">🗑️ Limpar</button>
+                <button type="button" class="btn btn-ver-relatorios" onclick="verRelatorios()">📄 Ver Relatórios</button>
+            </div>
+        </form>
+
+        <!-- Toast de Sucesso -->
+        <div id="toast-sucesso" class="toast">
+            <div class="toast-content">
+                <div class="toast-icon">✅</div>
+                <div class="toast-message">
+                    <strong>Relatório salvo!</strong>
+                    <p>Seu relatório foi salvo com sucesso.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para visualizar relatórios -->
+        <div id="modal-relatorios" class="modal">
+            <div class="modal-content agenda-content">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <div class="agenda-header">
+                    <h2>📅 Agenda de Relatórios</h2>
+                    <div class="busca-data">
+                        <label for="filtro-data">Buscar por data:</label>
+                        <input type="date" id="filtro-data" onchange="filtrarPorData()">
+                        <button onclick="limparFiltro()" class="btn-limpar-filtro">🔄 Ver Todos</button>
+                    </div>
+                    <div class="navegacao-agenda">
+                        <button onclick="navegarData(-1)" class="btn-nav">◀ Anterior</button>
+                        <span id="data-atual-filtro" class="data-atual"></span>
+                        <button onclick="navegarData(1)" class="btn-nav">Próximo ▶</button>
+                    </div>
+                </div>
+                <div id="lista-relatorios" class="agenda-lista"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="theme.js?v=<?php echo APP_VERSION; ?>"></script>
+    <script src="api-service.js?v=<?php echo APP_VERSION; ?>"></script>
+    <script src="script.js?v=<?php echo APP_VERSION; ?>"></script>
+    <script>
+        // Criar botão toggle de tema após o DOM carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('theme-toggle-container');
+            if (container && window.themeManager) {
+                window.themeManager.createToggleButton(container);
+            }
+        });
+    </script>
+</body>
+</html>
+
