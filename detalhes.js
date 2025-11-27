@@ -208,6 +208,15 @@ function exibirRelatorioCompleto(rel) {
         </div>
     ` : '';
     
+    // Comentários da Mãe (mostrar abaixo das observações se existir)
+    const comentariosMaeHTML = (rel.nome || rel.comentario) ? `
+        <div class="observacoes-box-detalhes" style="margin-top: 20px; background: #F0F8FF; border-left: 4px solid #4A9B8E;">
+            <strong>👩 Comentário da Mãe</strong>
+            ${rel.nome ? `<div style="margin-top: 10px; margin-bottom: 8px;"><strong>Nome:</strong> ${rel.nome}</div>` : ''}
+            ${rel.comentario ? `<div style="margin-top: 8px; white-space: pre-wrap;">${rel.comentario}</div>` : ''}
+        </div>
+    ` : '';
+    
     // Campos da Mãe (Nome e Comentário)
     const camposMaeHTML = `
         <div class="secao-detalhes" style="margin-top: 30px;">
@@ -221,7 +230,7 @@ function exibirRelatorioCompleto(rel) {
                     <input type="text" 
                            id="nome-mae" 
                            placeholder="Digite seu nome" 
-                           value="${rel.nome || ''}"
+                           value=""
                            style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; background: var(--bg-primary); color: var(--text-primary); box-sizing: border-box;">
                 </div>
                 <div style="margin-bottom: 20px;">
@@ -229,7 +238,7 @@ function exibirRelatorioCompleto(rel) {
                     <textarea id="comentario-mae" 
                               placeholder="Comente algo sobre este relatório..." 
                               rows="4"
-                              style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; background: var(--bg-primary); color: var(--text-primary); box-sizing: border-box; resize: vertical; font-family: inherit;">${rel.comentario || ''}</textarea>
+                              style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; background: var(--bg-primary); color: var(--text-primary); box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                 </div>
                 <button id="btn-salvar-comentarios" 
                         onclick="salvarComentariosMae()" 
@@ -259,6 +268,8 @@ function exibirRelatorioCompleto(rel) {
             ${reporHTML}
             
             ${observacoesHTML}
+            
+            ${comentariosMaeHTML}
             
             ${camposMaeHTML}
         </div>
@@ -431,11 +442,29 @@ async function salvarComentariosMae() {
         relatorioAtual.nome = nome || null;
         relatorioAtual.comentario = comentario || null;
         
-        // Mostrar mensagem de sucesso
-        mostrarMensagemSalvamento('✅ Comentários salvos com sucesso!', 'sucesso');
-        
         // Atualizar sessionStorage
         sessionStorage.setItem('relatorioDetalhes', JSON.stringify(relatorioAtual));
+        
+        // Limpar campos antes de recarregar
+        const nomeSalvo = nome;
+        const comentarioSalvo = comentario;
+        
+        // Limpar campos
+        document.getElementById('nome-mae').value = '';
+        document.getElementById('comentario-mae').value = '';
+        
+        // Recarregar a visualização para mostrar o comentário salvo
+        exibirRelatorioCompleto(relatorioAtual);
+        
+        // Mostrar mensagem de sucesso após recarregar
+        setTimeout(() => {
+            mostrarMensagemSalvamento('✅ Comentários salvos com sucesso!', 'sucesso');
+            // Scroll suave até a mensagem
+            const mensagemDiv = document.getElementById('mensagem-salvamento');
+            if (mensagemDiv) {
+                mensagemDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }, 200);
         
     } catch (error) {
         console.error('Erro ao salvar comentários:', error);
