@@ -18,14 +18,6 @@ define('ENABLE_CORS', true);
 // Timezone
 date_default_timezone_set('America/Sao_Paulo');
 
-// Configurações de sessão (apenas configuração, não inicia sessão aqui)
-// A sessão será iniciada pelas APIs quando necessário
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_samesite', 'Lax'); // Mudado para Lax para funcionar com redirecionamentos
-// Para HTTPS em produção, descomente a linha abaixo:
-// ini_set('session.cookie_secure', 1);
-
 /**
  * Conexão com o banco de dados
  */
@@ -52,14 +44,12 @@ function getDBConnection() {
 
 /**
  * Headers CORS e JSON
- * Esta função deve ser chamada apenas nas APIs que retornam JSON
  */
 function setHeaders() {
     if (ENABLE_CORS) {
         header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGINS);
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization');
-        header('Access-Control-Allow-Credentials: true'); // Permitir envio de cookies
     }
     header('Content-Type: application/json; charset=utf-8');
     
@@ -70,5 +60,6 @@ function setHeaders() {
     }
 }
 
-// NÃO chamar setHeaders() aqui - será chamado apenas nas APIs
+// Configurar headers
+setHeaders();
 

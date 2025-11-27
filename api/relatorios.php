@@ -10,7 +10,6 @@
  */
 
 require_once '../config.php';
-require_once '../auth-helpers.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $pdo = getDBConnection();
@@ -21,8 +20,6 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 try {
     switch ($method) {
         case 'GET':
-            // GET - Permitir para todos autenticados
-            requerAutenticacao(false);
             if ($id) {
                 // Buscar relatório específico
                 getRelatorio($pdo, $id);
@@ -33,15 +30,11 @@ try {
             break;
             
         case 'POST':
-            // POST - Apenas admin pode criar relatórios
-            requerAutenticacao(true);
             // Criar novo relatório
             createRelatorio($pdo);
             break;
             
         case 'PUT':
-            // PUT - Apenas admin pode atualizar relatórios
-            requerAutenticacao(true);
             // Atualizar relatório
             if (!$id) {
                 throw new Exception('ID do relatório é obrigatório para atualização');
@@ -50,8 +43,6 @@ try {
             break;
             
         case 'DELETE':
-            // DELETE - Apenas admin pode deletar relatórios
-            requerAutenticacao(true);
             // Deletar relatório
             if (!$id) {
                 throw new Exception('ID do relatório é obrigatório para exclusão');

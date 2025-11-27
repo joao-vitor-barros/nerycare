@@ -13,8 +13,7 @@ async function apiRequest(method, url, data = null) {
         method: method,
         headers: {
             'Content-Type': 'application/json',
-        },
-        credentials: 'include' // Incluir cookies de sessão
+        }
     };
     
     if (data) {
@@ -24,17 +23,6 @@ async function apiRequest(method, url, data = null) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        
-        // Interceptar erros de autenticação
-        if (response.status === 401 || response.status === 403) {
-            // Redirecionar para login se não autenticado ou sem permissão
-            if (typeof redirecionarSeNaoAutenticado !== 'undefined') {
-                redirecionarSeNaoAutenticado();
-            } else {
-                window.location.href = 'login.html';
-            }
-            throw new Error(result.error || 'Acesso negado');
-        }
         
         if (!response.ok) {
             throw new Error(result.error || 'Erro na requisição');
@@ -124,10 +112,7 @@ async function deletarRelatorio(id) {
  */
 async function verificarAPI() {
     try {
-        const response = await fetch(API_BASE_URL, { 
-            method: 'GET',
-            credentials: 'include'
-        });
+        const response = await fetch(API_BASE_URL, { method: 'GET' });
         return response.ok;
     } catch (error) {
         return false;
