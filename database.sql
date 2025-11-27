@@ -50,6 +50,10 @@ CREATE TABLE IF NOT EXISTS relatorios (
     -- Observações
     observacoes TEXT,
     
+    -- Campos da mãe
+    nome VARCHAR(255),
+    comentario TEXT,
+    
     -- Timestamps
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

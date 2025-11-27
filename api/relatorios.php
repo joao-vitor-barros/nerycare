@@ -126,8 +126,9 @@ function createRelatorio($pdo) {
         sono_horarios_despertares, sono_motivo_despertar,
         comportamento_humor, comportamento_atividade, comportamento_tempo_objetivo,
         saude_medicamento, saude_medicamento_detalhes, saude_sintomas, saude_sintomas_outro,
-        repor_itens, repor_outro, observacoes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        repor_itens, repor_outro, observacoes,
+        nome, comentario
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = $pdo->prepare($sql);
     
@@ -160,7 +161,9 @@ function createRelatorio($pdo) {
         isset($saude['sintomasOutro']) ? $saude['sintomasOutro'] : null,
         isset($data['repor']) && is_array($data['repor']) && count($data['repor']) > 0 ? json_encode($data['repor']) : null,
         isset($data['reporOutro']) ? $data['reporOutro'] : null,
-        isset($data['observacoes']) ? $data['observacoes'] : null
+        isset($data['observacoes']) ? $data['observacoes'] : null,
+        isset($data['nome']) ? $data['nome'] : null,
+        isset($data['comentario']) ? $data['comentario'] : null
     ];
     
     $stmt->execute($values);
@@ -201,7 +204,8 @@ function updateRelatorio($pdo, $id) {
         sono_horarios_despertares = ?, sono_motivo_despertar = ?,
         comportamento_humor = ?, comportamento_atividade = ?, comportamento_tempo_objetivo = ?,
         saude_medicamento = ?, saude_medicamento_detalhes = ?, saude_sintomas = ?, saude_sintomas_outro = ?,
-        repor_itens = ?, repor_outro = ?, observacoes = ?
+        repor_itens = ?, repor_outro = ?, observacoes = ?,
+        nome = ?, comentario = ?
         WHERE id = ?";
     
     $stmt = $pdo->prepare($sql);
@@ -236,6 +240,8 @@ function updateRelatorio($pdo, $id) {
         isset($data['repor']) && is_array($data['repor']) ? json_encode($data['repor']) : null,
         $data['reporOutro'] ?? null,
         $data['observacoes'] ?? null,
+        $data['nome'] ?? null,
+        $data['comentario'] ?? null,
         $id
     ];
     
@@ -310,6 +316,8 @@ function formatRelatorio($row) {
         'repor' => $row['repor_itens'] ? json_decode($row['repor_itens'], true) : [],
         'reporOutro' => $row['repor_outro'],
         'observacoes' => $row['observacoes'],
+        'nome' => $row['nome'],
+        'comentario' => $row['comentario'],
         'created_at' => $row['created_at'],
         'updated_at' => $row['updated_at']
     ];

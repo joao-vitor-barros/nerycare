@@ -208,6 +208,39 @@ function exibirRelatorioCompleto(rel) {
         </div>
     ` : '';
     
+    // Campos da Mãe (Nome e Comentário)
+    const camposMaeHTML = `
+        <div class="secao-detalhes" style="margin-top: 30px;">
+            <div class="secao-detalhes-header">
+                <span>👩</span>
+                <span>Comentários da Mãe</span>
+            </div>
+            <div class="secao-detalhes-content">
+                <div style="margin-bottom: 20px;">
+                    <label for="nome-mae" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-label);">Nome:</label>
+                    <input type="text" 
+                           id="nome-mae" 
+                           placeholder="Digite seu nome" 
+                           value="${rel.nome || ''}"
+                           style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; background: var(--bg-primary); color: var(--text-primary); box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label for="comentario-mae" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-label);">Comentário:</label>
+                    <textarea id="comentario-mae" 
+                              placeholder="Comente algo sobre este relatório..." 
+                              rows="4"
+                              style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; background: var(--bg-primary); color: var(--text-primary); box-sizing: border-box; resize: vertical; font-family: inherit;">${rel.comentario || ''}</textarea>
+                </div>
+                <button id="btn-salvar-comentarios" 
+                        onclick="salvarComentariosMae()" 
+                        style="background: #4A9B8E; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: background 0.3s;">
+                    💾 Salvar Comentários
+                </button>
+                <div id="mensagem-salvamento" style="margin-top: 10px; display: none; padding: 10px; border-radius: 8px; text-align: center; font-weight: 600;"></div>
+            </div>
+        </div>
+    `;
+    
     // Montar HTML completo
     const html = `
         <div class="relatorio-detalhes-completo">
@@ -226,6 +259,8 @@ function exibirRelatorioCompleto(rel) {
             ${reporHTML}
             
             ${observacoesHTML}
+            
+            ${camposMaeHTML}
         </div>
     `;
     
@@ -339,5 +374,99 @@ function formatarSintomas(sintomas, outro) {
         'outro': outro || 'Outro'
     };
     return map[sintomas] || sintomas;
+}
+
+// Função para salvar comentários da mãe
+async function salvarComentariosMae() {
+    if (!relatorioAtual || !relatorioAtual.id) {
+        mostrarMensagemSalvamento('⚠️ Erro: Relatório não encontrado.', 'erro');
+        return;
+    }
+    
+    const nome = document.getElementById('nome-mae').value.trim();
+    const comentario = document.getElementById('comentario-mae').value.trim();
+    const btnSalvar = document.getElementById('btn-salvar-comentarios');
+    
+    // Desabilitar botão durante salvamento
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = '💾 Salvando...';
+    
+    try {
+        // Criar objeto com todos os dados do relatório atual + novos campos
+        const dadosAtualizados = {
+            data: relatorioAtual.data,
+            resumo: relatorioAtual.resumo,
+            alimentacao: relatorioAtual.alimentacao || {},
+            higiene: relatorioAtual.higiene || {},
+            sono: relatorioAtual.sono || {},
+            comportamento: relatorioAtual.comportamento || {},
+            saude: relatorioAtual.saude || {},
+            repor: relatorioAtual.repor || [],
+            reporOutro: relatorioAtual.reporOutro || '',
+            observacoes: relatorioAtual.observacoes || '',
+            nome: nome || null,
+            comentario: comentario || null
+        };
+        
+        // Atualizar relatório via API
+        if (typeof atualizarRelatorio === 'function') {
+            await atualizarRelatorio(relatorioAtual.id, dadosAtualizados);
+        } else {
+            // Se api-service.js não estiver disponível, usar fetch diretamente
+            const response = await fetch(`api/relatorios.php?id=${relatorioAtual.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosAtualizados)
+            });
+            
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || 'Erro ao salvar');
+            }
+        }
+        
+        // Atualizar relatório atual localmente
+        relatorioAtual.nome = nome || null;
+        relatorioAtual.comentario = comentario || null;
+        
+        // Mostrar mensagem de sucesso
+        mostrarMensagemSalvamento('✅ Comentários salvos com sucesso!', 'sucesso');
+        
+        // Atualizar sessionStorage
+        sessionStorage.setItem('relatorioDetalhes', JSON.stringify(relatorioAtual));
+        
+    } catch (error) {
+        console.error('Erro ao salvar comentários:', error);
+        mostrarMensagemSalvamento('⚠️ Erro ao salvar comentários. Tente novamente.', 'erro');
+    } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = '💾 Salvar Comentários';
+    }
+}
+
+// Função para mostrar mensagem de salvamento
+function mostrarMensagemSalvamento(mensagem, tipo) {
+    const divMensagem = document.getElementById('mensagem-salvamento');
+    if (!divMensagem) return;
+    
+    divMensagem.textContent = mensagem;
+    divMensagem.style.display = 'block';
+    
+    if (tipo === 'sucesso') {
+        divMensagem.style.background = '#E8F8F5';
+        divMensagem.style.color = '#4A9B8E';
+        divMensagem.style.borderLeft = '4px solid #4A9B8E';
+    } else {
+        divMensagem.style.background = '#FFF5F4';
+        divMensagem.style.color = '#C97A6F';
+        divMensagem.style.borderLeft = '4px solid #C97A6F';
+    }
+    
+    // Esconder mensagem após 5 segundos
+    setTimeout(() => {
+        divMensagem.style.display = 'none';
+    }, 5000);
 }
 
