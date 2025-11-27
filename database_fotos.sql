@@ -7,3 +7,4 @@ ALTER TABLE relatorios
 ADD COLUMN IF NOT EXISTS higiene_fotos TEXT NULL COMMENT 'JSON array com URLs das fotos';
 
 
+
